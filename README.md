@@ -8,3 +8,6 @@ When connected to a ds18b20 temperature sensor and a pixhawk autopilot, this sof
 Written by Mike Holden.
 www.holdentechnology.com
 
+Here's the schematic:
+
+![circuit diagram](https://github.com/meholden/n3m0_payload2/raw/master/payload.png)
