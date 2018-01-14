@@ -96,8 +96,9 @@ void sendstatus() {
       Serial.write(buf, len);
       delay(1000);      
 //      display.clear();
-      display.drawString(0, 0, "====="); 
+      display.drawString(110, 0, "=="); 
       display.display();
+      gotmsg=1; //hack!
 
 }
 
@@ -106,13 +107,20 @@ void mavlink_request_comm() {
     uint8_t buf[MAVLINK_MAX_PACKET_LEN];
     if ((gotmsg) && (notrequested)) {
       // request streams
-      mavlink_msg_request_data_stream_pack(0, 1, &msg, sysid_from, compid_from, 0, 1, 1);
- 
+//      mavlink_msg_request_data_stream_pack(0, 1, &msg, sysid_from, compid_from, 0, 1, 1);
+      mavlink_msg_request_data_stream_pack(1,2, &msg, sysid_from, compid_from, 0, 1, 1);
+ // uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, uint8_t target_system, uint8_t target_component, uint8_t req_stream_id, uint16_t req_message_rate, uint8_t start_stop
+      
       // Copy the message to the send buffer
       uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
  
       // Send the message with the standard UART send function
       Serial.write(buf, len);
+      
+      display.clear();
+      display.drawString(0, 0, "Start data req"); 
+      display.display();
+      
       delay(1000);
       notrequested=0;
     }   
@@ -123,12 +131,15 @@ void comm_receive() {
  
   mavlink_message_t msg;
   mavlink_status_t status;
- 
-  // COMMUNICATION THROUGH EXTERNAL UART PORT (XBee serial)
- 
+  
   while(Serial.available() > 0 ) 
   {
+    digitalWrite(D0,(!(digitalRead(D0))));
     uint8_t c = Serial.read();
+//      display.clear();
+//      display.drawString(0, 0, "yyyy"); 
+//      display.drawString(0, 16, String(c)); 
+//      display.display();
     // Try to get a new message
     if(mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) {
       // Handle message
@@ -145,6 +156,7 @@ void comm_receive() {
 //      display.drawString(0, 0, "msg:" + String(msg.msgid)); 
 //      display.drawString(0, 16, String(millis())); 
 //      display.display();
+//      delay(2000);
       gotmsg=1; // got a message
       sysid_from = msg.sysid; // who it is from
       compid_from = msg.compid;
@@ -175,18 +187,6 @@ void comm_receive() {
               //timesys_usec = mavlink_msg_system_time_get_time_unix_usec(&msg);
               timesys_usec = mavlink_msg_system_time_get_time_boot_ms(&msg);
               timegps_usec = mavlink_msg_system_time_get_time_unix_usec(&msg);
-//              // This is a workaround: my boat GPS only sends GPS time every 2 minutes
-//              // while other GPS info come in much mor often.
-//              if (timegps_usec==timegps_old) {
-//                // not updated, fix using running system clock
-//                timegps_usec += (timesys_usec-timegps_boot);
-//                display.drawString(0,48,"XXXXXXXXX");
-//                display.display();
-//              } else {
-//                // updated, save starting point.
-//                timegps_old = timegps_usec;
-//                timegps_boot = timesys_usec;
-//              }
 //                display.clear();
 //                display.drawString(0, 0, "upT:" + String(float(timesys_usec))); 
 ////              Serial.print("\r\n upTIME: ");

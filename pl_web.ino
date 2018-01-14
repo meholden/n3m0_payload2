@@ -186,6 +186,7 @@ void handleMap() {
 }
 
 void start_the_server() {
+  //Serial.println("IN1");
   server.on("/", handleRoot);
   server.on("/stop", handleStop);
   server.on("/start", handleStart);
@@ -196,13 +197,14 @@ void start_the_server() {
   server.on("/social.php",handleSocial);
   server.serveStatic("/", SPIFFS, "/");
 
-  server.on("/inline", [](){
-    server.send(200, "text/plain", "this works as well");
-  });
+//  server.on("/inline", [](){
+//    server.send(200, "text/plain", "this works as well");
+//  });
 
   server.onNotFound(handleNotFound);
 
   server.begin();
+  //Serial.println("out");
    
 }
 

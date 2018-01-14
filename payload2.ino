@@ -76,11 +76,15 @@ void setupscreen(void) {
 void setup(void){
 
   /* Hardware Initializations ------------------- */
+  // LED Pin D0
+  pinMode(D0,OUTPUT);
+  digitalWrite(D0,LOW);
+  
   // Initialise LED display
   setupscreen();
   // Initialize serial (57600 for APM telemetry)
   Serial.begin(57600);
-
+  Serial.println("\n\n Welcome n3m0 User!");
   // Initialize temp sensor
   DS18B20.begin(); // IC Default 9 bit. If you have troubles consider upping it 12. Ups the delay giving the IC more time to process the temperature measurement
   DS18B20.setResolution(12); // 12bit=0.11F resolution, 9bit=0.9F
@@ -88,6 +92,8 @@ void setup(void){
   // Initialize file system
   if (!SPIFFS.begin()) {
     Serial.println("SPIFFS init failed");
+  } else {
+    Serial.println("SPIFFS filesystem init OK");
   }
 
   // Network & Webserver Init ========================
@@ -104,6 +110,8 @@ void setup(void){
   // configure to network or start AP mode
   start_the_wifi();
 
+  Serial.println("\n\nStarting Server...");
+
   start_the_server();
     
   Serial.println("HTTP server started");
@@ -111,7 +119,9 @@ void setup(void){
   // End of Network & Server Init.
 
   // Set up to receive serial stuff
+  // sets serial to use alternate pins (not USB)
   Serial.println("Swapping Serial port, goodbye.");
+  delay(1000);
   Serial.swap();
 }
 
