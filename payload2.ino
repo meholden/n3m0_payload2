@@ -123,6 +123,12 @@ void setup(void){
   Serial.println("Swapping Serial port, goodbye.");
   delay(1000);
   Serial.swap();
+  display.clear();
+  display.drawString(0, 0, "n3m0 data"); 
+ display.drawString(0, 16, "initialization"); 
+ display.drawString(0, 48, "complete"); 
+ display.display();
+ delay(3000);
 }
 
 void loop(void){
